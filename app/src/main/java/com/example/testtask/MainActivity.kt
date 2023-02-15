@@ -18,37 +18,57 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        //чтобы после пересоздания активити не открывала 1й фрагмент
-        if (savedInstanceState == null) {
-            startFirstFragment()
-        }
-        setupViewModelObservers {data ->
-            /*открываем 2й фрагмент и кладем его в backStack для того чтобы потом его можно было от
-            туда убрать и вернуться на 1й фрагмент*/
+        setupViewModelStateObserver()
+    }
+
+    //запускаем первый фрагмент
+    private fun startFirstFragment() {
+        if (supportFragmentManager.findFragmentByTag(FIRST_FRAGMENT_NAME) == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_view, SecondFragment.newInstance(data))
+                .replace(
+                    R.id.fragment_container_view,
+                    FirstFragment.newInstance(),
+                    FIRST_FRAGMENT_NAME
+                )
+                .commit()
+        }
+    }
+
+    private fun startSecondFragment() {
+        if (supportFragmentManager.findFragmentByTag(SECOND_FRAGMENT_NAME) == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragment_container_view,
+                    SecondFragment.newInstance(),
+                    SECOND_FRAGMENT_NAME
+                )
                 .addToBackStack(null)
                 .commit()
         }
     }
 
-    //запускаем первый фрагмент
-    private fun startFirstFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container_view, FirstFragment.newInstance())
-            .commit()
+    private fun setupViewModelStateObserver() {
+        /*переключаем фрагменты через обсервер, нужно так делать для того чтобы не вью сама решала
+        что и когда нужно запускать, ибо в ней не должны быть логики, а уже просто реагировала
+        на изменения и обрабатывала их так как нужно*/
+        viewModel.state.observe(this) { screen ->
+            when (screen) {
+                is State.FirstFragment -> {
+                    startFirstFragment()
+                }
+                is State.SecondFragment -> {
+                    startSecondFragment()
+                }
+                is State.ShouldCloseSecondFragment -> {
+                    supportFragmentManager.popBackStack()
+                }
+            }
+        }
     }
 
-    //требуемая функция высшего порядка
-    private inline fun setupViewModelObservers(crossinline openSecondFragment: (data: String) -> Unit) {
-        viewModel.data.observe(this) { data ->
-            openSecondFragment(data)
-        }
-
-        //убираем 2й фрагмент из стека и показываем пользователю 1й фрагмент
-        viewModel.shouldCloseSecondFragment.observe(this) {
-            supportFragmentManager.popBackStack()
-        }
+    companion object {
+        private const val FIRST_FRAGMENT_NAME = "first"
+        private const val SECOND_FRAGMENT_NAME = "second"
     }
 
 }

@@ -3,27 +3,25 @@ package com.example.testtask
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 //общая вью модель для передачи данных
 class SharedViewModel : ViewModel() {
 
-    //переменная для передачи данных из фрагмента в активити
-    private val _data = MutableLiveData<String>()
-    val data: LiveData<String>
-        get() = _data
+    private val _state = MutableLiveData<State>(State.FirstFragment)
+    val state: LiveData<State>
+        get() = _state
 
-    //когда переменная изменится мы закроем 2й фрагмент
-    private val _shouldCloseSecondFragment = MutableLiveData<Unit>()
-    val shouldCloseSecondFragment: LiveData<Unit>
-        get() = _shouldCloseSecondFragment
-
-    //передаем данные в переменную
-    fun sendData(data: String) {
-        _data.value = data
+    //тут используется setValue
+    fun startSecondFragment(data: String) {
+        _state.value = State.SecondFragment(data)
     }
 
-    //намеренно изменяем переменную, чтобы дать понять, что фрагмент нужно закрыть
-    fun shouldCloseSecondFragment() {
-        _shouldCloseSecondFragment.value = Unit
+    // поствэлуе используем тогда, когда нам нужно изменить что-то в юай потоке, но из другого потока
+    fun closeSecondFragment() {
+        viewModelScope.launch {
+            _state.postValue(State.ShouldCloseSecondFragment)
+        }
     }
 }

@@ -18,15 +18,6 @@ class SecondFragment : Fragment() {
         ViewModelProvider(requireActivity())[SharedViewModel::class.java]
     }
 
-    //данные, которые нам необходимо получить из агрументов
-    private lateinit var data: String
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        //получаем данные
-        data = requireArguments().getString(DATA, "")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -36,8 +27,13 @@ class SecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //присваиваем значение полученное из аргументов вью
-        binding.tvData.text = data
+        //получаем данные из вью модели
+        viewModel.state.observe(viewLifecycleOwner) {
+            if (it is State.SecondFragment) {
+                binding.tvData.text = it.data
+            }
+        }
+
         setupClickListeners()
     }
 
@@ -49,22 +45,11 @@ class SecondFragment : Fragment() {
     private fun setupClickListeners() {
         //удаляем из backStack'a и возвращаемся к первому фрагменту
         binding.buttonBack.setOnClickListener {
-            viewModel.shouldCloseSecondFragment()
+            viewModel.closeSecondFragment()
         }
     }
 
     companion object {
-
-        //ключ для передачи аргументов
-        private const val DATA = "data"
-
-        // Создаем фабричный метод и передаем через бандл нужные аргументы
-        fun newInstance(data: String): SecondFragment {
-            return SecondFragment().apply {
-                arguments = Bundle().apply {
-                    putString(DATA, data)
-                }
-            }
-        }
+        fun newInstance() = SecondFragment()
     }
 }
