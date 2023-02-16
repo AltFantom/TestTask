@@ -40,7 +40,7 @@ class FirstFragment : Fragment() {
         //при нажатии на Button считываем данные из EditText и отправляем их viewModel
         binding.buttonSendData.setOnClickListener {
             val data = binding.etData.text.toString()
-            viewModel.startSecondFragment(data)
+            viewModel.state.value = State.SecondFragment(data)
         }
     }
 

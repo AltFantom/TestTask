@@ -33,7 +33,6 @@ class SecondFragment : Fragment() {
                 binding.tvData.text = it.data
             }
         }
-
         setupClickListeners()
     }
 
@@ -45,7 +44,7 @@ class SecondFragment : Fragment() {
     private fun setupClickListeners() {
         //удаляем из backStack'a и возвращаемся к первому фрагменту
         binding.buttonBack.setOnClickListener {
-            viewModel.closeSecondFragment()
+            viewModel.state.value = State.ShouldCloseSecondFragment
         }
     }
 
