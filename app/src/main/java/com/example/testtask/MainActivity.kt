@@ -53,14 +53,17 @@ class MainActivity : AppCompatActivity() {
         на изменения и обрабатывала их так как нужно*/
         viewModel.state.observe(this) { screen ->
             when (screen) {
-                is State.FirstFragment -> {
+                State.FIRST_FRAGMENT -> {
                     startFirstFragment()
                 }
-                is State.SecondFragment -> {
+                State.SECOND_FRAGMENT -> {
                     startSecondFragment()
                 }
-                is State.ShouldCloseSecondFragment -> {
+                State.SHOULD_CLOSE_SECOND_FRAGMENT -> {
                     supportFragmentManager.popBackStack()
+                }
+                else -> {
+                    throw RuntimeException("screen can not be null")
                 }
             }
         }

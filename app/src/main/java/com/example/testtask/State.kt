@@ -1,12 +1,7 @@
 package com.example.testtask
 
-//состояние для навигации между фрагментами
-sealed class State {
-
-    object FirstFragment : State()
-
-    class SecondFragment(val data: String) : State()
-
-    object ShouldCloseSecondFragment : State()
-
+enum class State {
+    FIRST_FRAGMENT,
+    SECOND_FRAGMENT,
+    SHOULD_CLOSE_SECOND_FRAGMENT
 }

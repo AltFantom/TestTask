@@ -28,10 +28,8 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //получаем данные из вью модели
-        viewModel.state.observe(viewLifecycleOwner) {
-            if (it is State.SecondFragment) {
-                binding.tvData.text = it.data
-            }
+        viewModel.data.observe(viewLifecycleOwner) {
+                binding.tvData.text = it
         }
         setupClickListeners()
     }
@@ -44,7 +42,7 @@ class SecondFragment : Fragment() {
     private fun setupClickListeners() {
         //удаляем из backStack'a и возвращаемся к первому фрагменту
         binding.buttonBack.setOnClickListener {
-            viewModel.state.value = State.ShouldCloseSecondFragment
+            viewModel.state.value = State.SHOULD_CLOSE_SECOND_FRAGMENT
         }
     }
 
