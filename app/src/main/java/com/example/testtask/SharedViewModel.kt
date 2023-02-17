@@ -8,6 +8,9 @@ class SharedViewModel : ViewModel() {
 
     val state = MutableLiveData(State.FIRST_FRAGMENT)
 
-    val data = MutableLiveData<String>()
+    var data: String = EMPTY
 
+    companion object {
+        private const val EMPTY = ""
+    }
 }

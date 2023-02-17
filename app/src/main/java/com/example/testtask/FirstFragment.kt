@@ -41,7 +41,7 @@ class FirstFragment : Fragment() {
         binding.buttonSendData.setOnClickListener {
             val data = binding.etData.text.toString()
             viewModel.state.value = State.SECOND_FRAGMENT
-            viewModel.data.value = data
+            viewModel.data = data
         }
     }
 

@@ -28,9 +28,7 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //получаем данные из вью модели
-        viewModel.data.observe(viewLifecycleOwner) {
-                binding.tvData.text = it
-        }
+        binding.tvData.text = viewModel.data
         setupClickListeners()
     }
 
